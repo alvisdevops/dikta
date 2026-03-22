@@ -16,6 +16,8 @@ export interface QuadrantConfig {
   icon: React.ElementType;
   color: string;
   bg: string;
+  glow: string;
+  border: string;
 }
 
 export const QUADRANTS: QuadrantConfig[] = [
@@ -26,6 +28,8 @@ export const QUADRANTS: QuadrantConfig[] = [
     icon: TriangleAlert,
     color: "var(--q1-color)",
     bg: "var(--q1-bg)",
+    glow: "var(--q1-glow)",
+    border: "var(--q1-border)",
   },
   {
     key: "PLAN",
@@ -34,6 +38,8 @@ export const QUADRANTS: QuadrantConfig[] = [
     icon: Calendar,
     color: "var(--q2-color)",
     bg: "var(--q2-bg)",
+    glow: "var(--q2-glow)",
+    border: "var(--q2-border)",
   },
   {
     key: "DELEGATE",
@@ -42,6 +48,8 @@ export const QUADRANTS: QuadrantConfig[] = [
     icon: Users,
     color: "var(--q3-color)",
     bg: "var(--q3-bg)",
+    glow: "var(--q3-glow)",
+    border: "var(--q3-border)",
   },
   {
     key: "ELIMINATE",
@@ -50,6 +58,8 @@ export const QUADRANTS: QuadrantConfig[] = [
     icon: Trash2,
     color: "var(--q4-color)",
     bg: "var(--q4-bg)",
+    glow: "var(--q4-glow)",
+    border: "var(--q4-border)",
   },
 ];
 
@@ -74,30 +84,38 @@ export function Quadrant({
   const pendingCount = tasks.filter((t) => !t.completed).length;
 
   return (
-    <div className="flex h-full flex-col bg-white">
+    <div
+      className="flex h-full flex-col"
+      style={{ backgroundColor: config.bg }}
+    >
       {/* Header */}
       <div
-        className="flex items-center gap-2 px-4 py-2.5"
+        className="flex items-center gap-2.5 px-4 py-2.5"
         style={{
-          backgroundColor: config.bg,
-          borderLeft: `4px solid ${config.color}`,
+          borderBottom: `1px solid ${config.border}`,
         }}
       >
-        <Icon className="h-4 w-4" style={{ color: config.color }} />
+        <div
+          className="flex h-6 w-6 items-center justify-center rounded-md"
+          style={{ backgroundColor: config.glow }}
+        >
+          <Icon className="h-3.5 w-3.5" style={{ color: config.color }} />
+        </div>
         <span
-          className="text-sm font-semibold font-[family-name:var(--font-space-grotesk)]"
+          className="text-sm font-semibold font-[family-name:var(--font-space-grotesk)] tracking-tight"
           style={{ color: config.color }}
         >
           {config.label}
         </span>
-        <span
-          className="text-xs text-[var(--text-secondary)]"
-        >
+        <span className="text-[11px] text-[var(--text-secondary)] tracking-wide uppercase">
           {config.description}
         </span>
         <span
-          className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold text-white"
-          style={{ backgroundColor: config.color }}
+          className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[11px] font-bold tabular-nums"
+          style={{
+            backgroundColor: config.glow,
+            color: config.color,
+          }}
         >
           {pendingCount}
         </span>
@@ -107,7 +125,7 @@ export function Quadrant({
       <div className="flex flex-1 flex-col gap-1.5 overflow-y-auto p-2">
         {tasks.length === 0 ? (
           <div className="flex flex-1 items-center justify-center py-8">
-            <span className="text-sm text-[var(--text-secondary)]">
+            <span className="text-sm text-[var(--text-muted)]">
               Sin tareas
             </span>
           </div>
@@ -116,6 +134,7 @@ export function Quadrant({
             <TaskCard
               key={task.id}
               task={task}
+              quadrantColor={config.color}
               onToggleComplete={onToggleComplete}
               onEdit={onEdit}
               onDelete={onDelete}

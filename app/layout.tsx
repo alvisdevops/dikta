@@ -13,7 +13,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Eisenhower Tasks",
+  title: "Dikta - Eisenhower Tasks",
   description: "Gestión de tareas con la matriz de Eisenhower e IA",
 };
 
@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased bg-[var(--bg-primary)]`}>
         {children}
       </body>
     </html>

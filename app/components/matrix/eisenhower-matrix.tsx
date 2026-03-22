@@ -40,7 +40,7 @@ export function EisenhowerMatrix({
       </div>
 
       {/* Mobile: Accordion */}
-      <div className="flex flex-col md:hidden overflow-y-auto">
+      <div className="flex h-full flex-col md:hidden overflow-y-auto bg-[var(--bg-primary)]">
         {QUADRANTS.map((config) => (
           <MobileAccordion
             key={config.key}

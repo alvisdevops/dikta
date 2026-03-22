@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { MoreHorizontal, Check } from "lucide-react";
+import { MoreHorizontal, Check, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Task } from "@/hooks/use-tasks";
 
 interface TaskCardProps {
   task: Task;
+  quadrantColor?: string;
   onToggleComplete: (id: string, completed: boolean) => void;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
@@ -23,6 +24,7 @@ const QUADRANT_LABELS: Record<Task["quadrant"], string> = {
 
 export function TaskCard({
   task,
+  quadrantColor,
   onToggleComplete,
   onEdit,
   onDelete,
@@ -36,12 +38,13 @@ export function TaskCard({
     return `Vence: ${date.toLocaleDateString("es", { day: "numeric", month: "short" })}`;
   };
 
-  const confidenceText = `IA ${Math.round(task.aiConfidence * 100)}%`;
+  const confidenceText = `${Math.round(task.aiConfidence * 100)}%`;
 
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-lg border border-[var(--border-color)] bg-white p-3",
+        "group flex items-center gap-3 rounded-lg border border-[var(--border-color)] p-3 transition-all duration-200",
+        "bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] hover:border-[var(--border-glow)]",
         compact ? "gap-2 p-2" : "p-3 gap-3",
         task.completed && "opacity-[var(--completed-opacity)]",
       )}
@@ -50,11 +53,15 @@ export function TaskCard({
       <button
         onClick={() => onToggleComplete(task.id, !task.completed)}
         className={cn(
-          "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded",
+          "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded transition-all",
           task.completed
-            ? "bg-[var(--text-primary)] border-[1.5px] border-[var(--text-primary)]"
-            : "border-[1.5px] border-[var(--border-color)]",
+            ? "border-[1.5px]"
+            : "border-[1.5px] border-[var(--text-muted)] hover:border-[var(--text-secondary)]",
         )}
+        style={task.completed ? {
+          backgroundColor: quadrantColor || 'var(--text-secondary)',
+          borderColor: quadrantColor || 'var(--text-secondary)',
+        } : undefined}
       >
         {task.completed && <Check className="h-3.5 w-3.5 text-white" />}
       </button>
@@ -76,7 +83,8 @@ export function TaskCard({
             </span>
           )}
           {task.aiConfidence > 0 && (
-            <span className="rounded bg-[var(--badge-bg)] px-1.5 py-0.5 text-[11px] text-[var(--text-secondary)]">
+            <span className="flex items-center gap-1 rounded-md bg-[var(--badge-bg)] px-1.5 py-0.5 text-[11px] text-[var(--text-secondary)]">
+              <Sparkles className="h-2.5 w-2.5" />
               {confidenceText}
             </span>
           )}
@@ -87,7 +95,7 @@ export function TaskCard({
       <div className="relative">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] opacity-0 group-hover:opacity-100 transition-opacity"
         >
           <MoreHorizontal className="h-4 w-4" />
         </button>
@@ -98,9 +106,9 @@ export function TaskCard({
               className="fixed inset-0 z-40"
               onClick={() => setMenuOpen(false)}
             />
-            <div className="absolute right-0 top-6 z-50 min-w-[160px] rounded-lg border border-[var(--border-color)] bg-white py-1 shadow-lg">
+            <div className="absolute right-0 top-6 z-50 min-w-[160px] rounded-lg border border-[var(--glass-border)] bg-[var(--bg-secondary)] py-1 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl">
               <button
-                className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--bg-secondary)]"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]"
                 onClick={() => {
                   onEdit(task);
                   setMenuOpen(false);
@@ -113,7 +121,7 @@ export function TaskCard({
                 .map((q) => (
                   <button
                     key={q}
-                    className="w-full px-3 py-2 text-left text-sm hover:bg-[var(--bg-secondary)]"
+                    className="w-full px-3 py-2 text-left text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)]"
                     onClick={() => {
                       onMoveToQuadrant(task.id, q);
                       setMenuOpen(false);
@@ -124,7 +132,7 @@ export function TaskCard({
                 ))}
               <hr className="my-1 border-[var(--border-color)]" />
               <button
-                className="w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-[var(--bg-secondary)]"
+                className="w-full px-3 py-2 text-left text-sm text-[var(--q1-color)] hover:bg-[var(--bg-card-hover)]"
                 onClick={() => {
                   onDelete(task.id);
                   setMenuOpen(false);
